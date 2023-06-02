@@ -1,0 +1,12 @@
+{
+    "production": {
+        "app_function": "app.app",
+        "aws_region": "us-west-1",
+        "profile_name": "default",
+        "project_name": "app",
+        "runtime": "python3.9",
+        "s3_bucket": "zappa-d1gpytxfn",
+        "slim_handler": true,
+        "debug": true
+    }
+}

@@ -1,0 +1,15 @@
+flask
+flask_cors
+python-dotenv
+requests
+google-api-python-client
+langchain
+zappa
+unstructured
+openai
+tiktoken
+faiss-cpu
+gunicorn
+tabulate
+pdf2image
+nltk
