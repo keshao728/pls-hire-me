@@ -29,7 +29,6 @@ completed_tasks = manager.dict()
 
 # Perform a Google search to retrieve relevant site information
 def google_search(query, api_key, cx_id, **kwargs):
-    print("google_search")
     """
     Used Google Custom Search API to perform targeted searches.
     Fetches search results and returns a list of relevant search items.
@@ -48,11 +47,8 @@ def google_search(query, api_key, cx_id, **kwargs):
     data = response.json()
 
     if response.status_code != 200:
-        print(response)
-        print(response.headers, "response.headers")
         raise Exception('Google Search API request failed with status code {}'.format(response.status_code))
 
-    print(data, "data inside google_search")
     if 'items' in data:
         return data['items']
     else:
@@ -105,9 +101,6 @@ def process_data():
     return make_response(jsonify({'task_id': task_id}), 200)
 
 def process_task(task_id, site_names, queries, google_api_key, cx_id, tasks_in_progress):
-    print('hello in processing')
-
-    print("site_names:", site_names)
     results = []  # Initialize results as an empty list
 
     for site_name in site_names:
@@ -115,18 +108,13 @@ def process_task(task_id, site_names, queries, google_api_key, cx_id, tasks_in_p
         search_results = google_search(site_name, google_api_key, cx_id, num=3)
         urls = [result['link'] for result in search_results]
 
-        print("urls:", urls)
         loaders = UnstructuredURLLoader(urls=urls)
         loaded_data = loaders.load()
-
-        print(loaded_data, "loaded_data")
 
         # Split loaded data into manageable chunks for processing
         text_splitter = CharacterTextSplitter(
             separator='.', chunk_size=1000, chunk_overlap=200)
         docs = text_splitter.split_documents(loaded_data)
-
-        print(docs, "docs")
 
         # Convert text chunks into vector representations for semantic analysis
         embeddings = OpenAIEmbeddings()
@@ -159,22 +147,14 @@ def process_task(task_id, site_names, queries, google_api_key, cx_id, tasks_in_p
             site_report[full_query] = result
         results.append(site_report)
 
-        print(site_report, "site_report")
-
     tasks_in_progress.remove(task_id)
     completed_tasks[task_id] = results
 
-    print(tasks_in_progress, "tasks_in_progress")
-    print(completed_tasks, "completed_tasks")
     return
 
 @app.route('/status/<task_id>', methods=['GET'])
 def check_status(task_id):
-    global tasks_in_progress, completed_tasks  # Add 'completed_tasks' as a global variable
-
-    print('in check_status')
-    print(tasks_in_progress, "tasks_in_progress")
-    print(completed_tasks, "completed_tasks")
+    global tasks_in_progress, completed_tasks 
 
     if task_id in tasks_in_progress:
         return make_response(jsonify({'status': 'Processing'}), 200)

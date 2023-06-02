@@ -21,10 +21,6 @@ const Report = React.forwardRef((props, ref) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    console.log(
-      siteNameArray,
-      "-----------------------------siteNameArray-----------------"
-    );
     try {
       // Send a POST request to start the processing and obtain task ID
       const response = await axios.post("/process", {
@@ -42,18 +38,13 @@ const Report = React.forwardRef((props, ref) => {
       if (taskID) {
         try {
           const response = await axios.get(`/status/${taskID}`);
-          console.log(
-            response,
-            "-----------------------------Response-----------------"
-          );
+
           if (response.data.status === "Completed") {
             const mappedResults = siteNameArray.map((name, index) => ({
               name,
               result: response.data.results[index],
             }));
-            console.log(mappedResults, "mapped results");
             setResults(mappedResults);
-            console.log(results, "results");
             setTaskID("");
             setLoading(false);
           }
